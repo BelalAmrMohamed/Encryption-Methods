@@ -1,0 +1,6 @@
+*.txt
+*.md
+!robots.txt
+!README.md
+
+tools/

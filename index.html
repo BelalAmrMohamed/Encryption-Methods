@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Learn classical cryptography concepts including Caesar, Playfair, Row Transposition, and Rail Fence ciphers.">
+    <title>Encryption Methods | Learn Classical Cryptography</title>
+
+    <link rel="stylesheet" href="CSS/styles.css">
+</head>
+
+<body>
+
+    <header class="hero-section">
+        <div class="container">
+            <h1>Encryption Methods</h1>
+            <p class="subtitle">An interactive guide to classical cryptography techniques.</p>
+            <a href="#ciphers" class="btn-primary">Explore Ciphers</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="introduction" class="content-section">
+            <div class="container">
+                <h2>What is Cryptography?</h2>
+                <p>
+                    Cryptography is the practice of securing communication. It converts readable information (plaintext)
+                    into an unreadable format (ciphertext) so only authorized parties can understand it. This website
+                    focuses on four fundamental classical algorithms used historically to protect secrets.
+                </p>
+            </div>
+        </section>
+
+        <section id="ciphers" class="content-section">
+            <div class="container">
+                <h2>Available Ciphers</h2>
+                <div class="cipher-grid">
+
+                    <article class="cipher-card" id="card-caesar">
+                        <h3>Caesar Cipher</h3>
+                        <p>A simple substitution technique where each letter is shifted a fixed number of places down
+                            the alphabet.</p>
+                        <a href="caesar.html" class="btn-secondary">Try Caesar Cipher</a>
+                    </article>
+
+                    <article class="cipher-card" id="card-playfair">
+                        <h3>Playfair Cipher</h3>
+                        <p>A digraph substitution cipher using a 5x5 grid of letters to encrypt pairs of letters instead
+                            of single ones.</p>
+                        <a href="playfair.html" class="btn-secondary">Try Playfair Cipher</a>
+                    </article>
+
+                    <article class="cipher-card" id="card-row">
+                        <h3>Row Transposition</h3>
+                        <p>A method where the message is written out in rows of a fixed length and then read out column
+                            by column.</p>
+                        <a href="row-transposition.html" class="btn-secondary">Try Row Transposition</a>
+                    </article>
+
+                    <article class="cipher-card" id="card-rail">
+                        <h3>Rail Fence Cipher</h3>
+                        <p>A transposition cipher that writes the message in a zigzag pattern across multiple "rails" or
+                            lines.</p>
+                        <a href="coming-soon.html" class="btn-secondary">Try Rail Fence Cipher</a>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Crafted by Belal Amr | <a target="_blank" class="portfolio"
+                    href="https://belalamrmohamed.github.io/portfolio/">Portfolio</a> | &copy; 2026 Encryption Methods
+                Project.</p>
+            <p class="disclaimer">For educational purposes only. These classical methods are not secure for modern use.
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>
