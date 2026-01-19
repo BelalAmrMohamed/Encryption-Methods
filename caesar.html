@@ -15,7 +15,7 @@
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
+            max-width: 800px;
             margin: 2rem auto;
             border-top: 4px solid var(--accent-color);
         }
@@ -87,6 +87,49 @@
             font-weight: bold;
             font-size: 0.9rem;
         }
+
+        /* Visualizer Styles */
+        .alphabet-row {
+            display: grid;
+            grid-template-columns: repeat(26, 1fr);
+            gap: 2px;
+            margin-bottom: 5px;
+        }
+
+        .alphabet-row .cell {
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 0.8rem;
+            padding: 5px 0;
+            font-family: monospace;
+            background: #fff;
+        }
+
+        .alphabet-row .cell.highlight {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        .alphabet-label {
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile responsive fix for the long alphabet grid */
+        @media (max-width: 700px) {
+            .alphabet-row {
+                overflow-x: auto;
+                display: flex;
+            }
+
+            .alphabet-row .cell {
+                min-width: 25px;
+            }
+        }
     </style>
 </head>
 
@@ -143,7 +186,8 @@
 
                     <div class="input-group">
                         <label for="key">Shift Key (Number)</label>
-                        <input type="number" id="key" placeholder="Enter shift amount (e.g., 3)" min="1" max="25">
+                        <input type="number" id="key" placeholder="Enter shift amount (e.g., 3)" min="1" max="25"
+                            value="3">
                     </div>
 
                     <div class="btn-group">
@@ -159,16 +203,31 @@
                 </div>
             </div>
         </section>
-    </main>
 
-    <section id="worked-example-section" class="content-section" style="display: none;">
-        <div class="container">
-            <h2>Worked Example: How Your Ciphertext Was Produced</h2>
-            <div id="worked-example-content" class="tool-container"
-                style="border-top: 4px solid var(--primary-color); max-width: 800px;">
+        <section id="visualizer-section" class="content-section" style="display: none; background-color: #fff;">
+            <div class="container">
+                <h2>Visualizer: The Shift Map</h2>
+                <p style="text-align: center; color: var(--text-light);">See how the alphabet aligns with your chosen
+                    key.</p>
+
+                <div class="tool-container" style="max-width: 900px;">
+                    <div id="caesar-visualizer">
+                    </div>
+                    <div id="visualizer-explanation" style="margin-top: 1rem; text-align: center; font-style: italic;">
+                    </div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <section id="worked-example-section" class="content-section" style="display: none;">
+            <div class="container">
+                <h2>Worked Example: How It Was Calculated</h2>
+                <div id="worked-example-content" class="tool-container"
+                    style="border-top: 4px solid var(--primary-color); max-width: 800px;">
+                </div>
+            </div>
+        </section>
+    </main>
 
     <footer>
         <div class="container" style="text-align: center;">
