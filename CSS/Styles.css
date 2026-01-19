@@ -5,7 +5,7 @@
   /* Color Palette - Professional & Academic */
   --primary-color: #2c3e50; /* Deep Slate Blue */
   --accent-color: #3498db; /* Educational Blue */
-  --accent-hover: #2980b9; /* Darker Blue for hover */
+  --accent-hover: #2980b9; /* Darker Blue for Hover */
   --bg-light: #f4f7f6; /* Soft Light Gray for background */
   --bg-white: #ffffff; /* Pure White for cards */
   --text-main: #333333; /* Dark Gray for readability */
@@ -124,7 +124,7 @@ h2 {
 }
 
 /* =========================================
-   5. Introduction Section
+   5. Introduction Section 
    ========================================= */
 #introduction p {
   max-width: 800px;
