@@ -1,0 +1,87 @@
+{
+  "id": "/Encryption Methods/",
+  "name": "Encryption Methods",
+  "short_name": "Encryption Methods",
+  "description": "An advanced educational platfor designed to teach junior programmers different ciphering techniques",
+  "start_url": "/Encryption Methods/",
+  "scope": "/Encryption Methods/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "minimal-ui"],
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity"],
+  "dir": "ltr",
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/maskable-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "images/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Encryption Methods Dashboard on Desktop"
+    },
+    {
+      "src": "images/screenshot-mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "label": "Interactive Educational MethodsPlayer platform"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Caesar Cipher",
+      "short_name": "Stats",
+      "description": "Teaches studens how the  cipher Caesar method works",
+      "url": "/Encryption Methods/caesar.html",
+      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Playfair Cipher",
+      "short_name": "Stats",
+      "description": "Teaches studens how the Playfair cipher method works",
+      "url": "/Encryption Methods/playfair.html",
+      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Row Transposition",
+      "short_name": "Stats",
+      "description": "Teaches studens how the Row Transposition cipher method works",
+      "url": "/Encryption Methods/row-transposition.html",
+      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Rail Fence Cipher",
+      "short_name": "Stats",
+      "description": "Teaches studens how the Rail Fence Cipher cipher method works",
+      "url": "/Encryption Methods/railfence.html",
+      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+cipher",
+      "url": "/Encryption Methods/index.html"
+    }
+  ]
+}
