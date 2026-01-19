@@ -1,8 +1,8 @@
 const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-function encryptWord() {
+function encryptWord(key = parseInt(document.getElementById("key").value)) {
   let word = document.getElementById("word").value;
-  const key = parseInt(document.getElementById("key").value);
+  // const key = parseInt(document.getElementById("key").value);
 
   // Remove any non-alphabet characters and convert everything to uppercase
   word = word.replace(/[^a-zA-Z]/g, "").toUpperCase();
@@ -13,31 +13,18 @@ function encryptWord() {
 }
 
 function decryptWord() {
-  let word = document.getElementById("word").value;
-  const key = parseInt(document.getElementById("key").value);
-
-  // Remove any non-alphabet characters and convert everything to uppercase
-  word = word.replace(/[^a-zA-Z]/g, "").toUpperCase();
-
-  const decipheredWord = transformWord(word, -key);
-  document.getElementById("result").innerText =
-    `Deciphered Word: ${decipheredWord}`;
+  encryptWord(parseInt(document.getElementById("key").value) * -1);
 }
 
-function transformWord(word, shift) {
+function transformWord(word, key) {
   let result = "";
-
   for (let i = 0; i < word.length; i++) {
-    const char = word[i];
-    const lowerChar = char.toLowerCase();
+    const code = word.charCodeAt(i) - 65; // 'A' is 0
 
-    if (alphabet.includes(lowerChar)) {
-      const oldPos = alphabet.indexOf(lowerChar);
-      const newPos = (oldPos + shift + 26) % 26; // Add 26 to handle negative shifts
-      const newChar = alphabet[newPos];
-      result += newChar.toUpperCase(); // Ensure the output is uppercase
-    }
+    // This is the "Magic Formula" for wrapping correctly:
+    const shiftedCode = (((code + key) % 26) + 26) % 26;
+
+    result += String.fromCharCode(shiftedCode + 65);
   }
-
   return result;
 }

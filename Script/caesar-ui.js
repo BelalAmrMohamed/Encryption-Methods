@@ -1,6 +1,4 @@
-/* caesar-ui.js
-   Bridge script to connect UI and provide dynamic worked examples.
-*/
+// caesar-ui.js
 
 document.addEventListener("DOMContentLoaded", function () {
   const encryptBtn = document.getElementById("btn-encrypt");
@@ -32,8 +30,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (decryptBtn) {
     decryptBtn.addEventListener("click", function () {
-      encryptWord(); // Logic handles UI update
-      exampleSection.style.display = "none"; // Hide example during decryption for clarity
+      const word = document.getElementById("word").value;
+      const key = document.getElementById("key").value;
+
+      if (!word || !key) {
+        alert("Please enter both a message and a shift key.");
+        return;
+      }
+
+      // 1. Run the original logic from caesar.js
+      decryptWord();
+
+      // 2. Extract the result to build the explanation
+      const resultText = document.getElementById("result").innerText;
+      const ciphertext = resultText.replace("Ciphered Word: ", "");
+
+      // 3. Generate and show the worked example
+      showWorkedExample(word, key, ciphertext);
     });
   }
 

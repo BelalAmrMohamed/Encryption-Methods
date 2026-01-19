@@ -1,6 +1,4 @@
-/* playfair-ui.js 
-   ENHANCED: Explicitly shows resulting output letters for each step.
-*/
+// Script/playfair-ui.js
 
 let currentStep = 0;
 let stepsData = [];
