@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const nextBtn = document.getElementById("btn-next");
   const prevBtn = document.getElementById("btn-prev");
 
+  // --- Encryption Button Handler ---
   if (encryptBtn) {
     encryptBtn.addEventListener("click", function () {
       const keyword = document.getElementById("keyword").value;
@@ -23,67 +24,114 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      handleEncryption();
+      handleEncryption(); // Logic from playfair.js
 
-      prepareVisualizerSteps(keyword, plaintext);
-      currentStep = 0;
-      visualSection.style.display = "block";
-      renderVisualStep();
-
-      generateWorkedExample(keyword, plaintext);
+      // Setup Visuals for Encryption (true)
+      setupVisuals(keyword, plaintext, true);
     });
   }
 
+  // --- Decryption Button Handler (Updated) ---
   if (decryptBtn) {
     decryptBtn.addEventListener("click", function () {
-      handleDecryption();
-      visualSection.style.display = "none";
-      exampleSection.style.display = "none";
+      const keyword = document.getElementById("keyword").value;
+      const ciphertext = document.getElementById("plaintext").value;
+
+      if (!keyword || !ciphertext) {
+        alert("Please enter both a keyword and a ciphertext.");
+        return;
+      }
+
+      handleDecryption(); // Logic from playfair.js
+
+      // Setup Visuals for Decryption (false)
+      setupVisuals(keyword, ciphertext, false);
     });
+  }
+
+  // --- Helper to trigger UI updates ---
+  function setupVisuals(keyword, text, isEncrypt) {
+    prepareVisualizerSteps(keyword, text, isEncrypt);
+    currentStep = 0;
+
+    // Show sections
+    visualSection.style.display = "block";
+
+    // Update visualizer title based on mode
+    const vizTitle = visualSection.querySelector("h2");
+    vizTitle.innerText = isEncrypt
+      ? "Visualizer: Encryption Steps"
+      : "Visualizer: Decryption Steps";
+
+    renderVisualStep(isEncrypt);
+    generateWorkedExample(keyword, text, isEncrypt);
   }
 
   nextBtn.onclick = () => {
     if (currentStep < stepsData.length - 1) {
       currentStep++;
-      renderVisualStep();
+      // Determine if we are in encrypt or decrypt mode based on the visualizer title
+      // (Simple check to persist state without a global variable)
+      const isEncrypt = visualSection
+        .querySelector("h2")
+        .innerText.includes("Encryption");
+      renderVisualStep(isEncrypt);
     }
   };
   prevBtn.onclick = () => {
     if (currentStep > 0) {
       currentStep--;
-      renderVisualStep();
+      const isEncrypt = visualSection
+        .querySelector("h2")
+        .innerText.includes("Encryption");
+      renderVisualStep(isEncrypt);
     }
   };
 
-  function prepareVisualizerSteps(key, text) {
+  // --- Data Preparation for Visualizer ---
+  function prepareVisualizerSteps(key, text, isEncrypt) {
     const matrix = createKeyMatrix(key);
-    const cleanText = text
+    let cleanText = text
       .toLowerCase()
       .replace(/[^a-z]/g, "")
       .replace(/j/g, "i");
 
     stepsData = [];
-    let processed = "";
+    let pairs = [];
 
-    // Match preprocessing logic from playfair.js
-    for (let i = 0; i < cleanText.length; i++) {
-      let a = cleanText[i];
-      let b = i + 1 < cleanText.length ? cleanText[i + 1] : "x";
-      if (a === b) {
-        processed += a + "x";
-      } else {
-        processed += a + b;
-        i++;
+    if (isEncrypt) {
+      // ENCRYPTION: Handle 'X' padding for doubles
+      let processed = "";
+      for (let i = 0; i < cleanText.length; i++) {
+        let a = cleanText[i];
+        let b = i + 1 < cleanText.length ? cleanText[i + 1] : "x";
+        if (a === b) {
+          processed += a + "x";
+        } else {
+          processed += a + b;
+          i++;
+        }
+      }
+      if (processed.length % 2 !== 0) processed += "x";
+
+      for (let i = 0; i < processed.length; i += 2) {
+        pairs.push(processed.substring(i, i + 2));
+      }
+    } else {
+      // DECRYPTION: Just split into pairs (Ciphertext is always even)
+      if (cleanText.length % 2 !== 0) cleanText += "x"; // Safety fallback
+      for (let i = 0; i < cleanText.length; i += 2) {
+        pairs.push(cleanText.substring(i, i + 2));
       }
     }
-    if (processed.length % 2 !== 0) processed += "x";
 
-    for (let i = 0; i < processed.length; i += 2) {
-      const charA = processed[i];
-      const charB = processed[i + 1];
+    // Process all pairs
+    pairs.forEach((pairStr) => {
+      const charA = pairStr[0];
+      const charB = pairStr[1];
 
-      // Call processPair from playfair.js to get the exact output letters
-      const resultPairStr = processPair(matrix, charA, charB, true);
+      // Use core logic to get result
+      const resultPairStr = processPair(matrix, charA, charB, isEncrypt);
       const resultPair = resultPairStr.toLowerCase().split("");
 
       const posA = findPosition(matrix, charA);
@@ -105,22 +153,24 @@ document.addEventListener("DOMContentLoaded", function () {
         rule,
         matrix,
       });
-    }
+    });
   }
 
-  function renderVisualStep() {
+  // --- Render the Grid ---
+  function renderVisualStep(isEncrypt) {
     const step = stepsData[currentStep];
     const display = document.getElementById("interactive-matrix-display");
     const indicator = document.getElementById("step-indicator");
     const ruleText = document.getElementById("rule-text");
 
-    indicator.innerText = `Step ${currentStep + 1} of ${stepsData.length}`;
+    indicator.innerText = `Pair ${currentStep + 1} of ${stepsData.length}`;
 
     const charA = step.pair[0].toUpperCase();
     const charB = step.pair[1].toUpperCase();
     const resA = step.resultPair[0].toUpperCase();
     const resB = step.resultPair[1].toUpperCase();
 
+    // Generate Table
     let tableHTML = '<table class="matrix-table">';
     for (let r = 0; r < 5; r++) {
       tableHTML += "<tr>";
@@ -128,22 +178,22 @@ document.addEventListener("DOMContentLoaded", function () {
         let className = "";
         const char = step.matrix[r][c];
 
-        // Highlight Input Letters (Blue)
+        // Highlight Input (Blue)
         if (
           (r === step.posA[0] && c === step.posA[1]) ||
           (r === step.posB[0] && c === step.posB[1])
         ) {
-          className = "cell-plain";
+          className = "cell-plain"; // Reused class name for "Input"
         }
-        // Highlight Output Letters (Green)
+        // Highlight Output (Green)
         else if (
           (r === step.posOutA[0] && c === step.posOutA[1]) ||
           (r === step.posOutB[0] && c === step.posOutB[1])
         ) {
-          className = "cell-cipher";
+          className = "cell-cipher"; // Reused class name for "Output"
         }
 
-        // Add Rectangle boundary for visual context
+        // Rectangle Highlight
         if (step.rule === "Rectangle") {
           if (
             className === "" &&
@@ -162,68 +212,102 @@ document.addEventListener("DOMContentLoaded", function () {
     tableHTML += "</table>";
     display.innerHTML = tableHTML;
 
-    // Enhanced Rule Explanation showing transformation
+    // --- Dynamic Text Explanations ---
+    let explanation = "";
+    if (step.rule === "Row") {
+      explanation = isEncrypt
+        ? "Since they are in the same row, we shift <strong>Right</strong>."
+        : "Since they are in the same row, we shift <strong>Left</strong> (reversing the encryption).";
+    } else if (step.rule === "Column") {
+      explanation = isEncrypt
+        ? "Since they are in the same column, we shift <strong>Down</strong>."
+        : "Since they are in the same column, we shift <strong>Up</strong> (reversing the encryption).";
+    } else {
+      explanation =
+        "They form a rectangle. We pick the corners on the same row.";
+    }
+
     ruleText.innerHTML = `
             <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #ddd;">
                 <span style="font-size: 1.2rem; font-weight: bold;">
                     ${charA}${charB} &rarr; <span style="color: #27ae60;">${resA}${resB}</span>
                 </span>
             </div>
-            <strong>${step.rule} Rule:</strong> Letters <strong>${charA}</strong> and <strong>${charB}</strong> became <strong>${resA}</strong> and <strong>${resB}</strong> because they were in the same ${step.rule.toLowerCase()}.
+            <strong>${step.rule} Rule:</strong> ${explanation}
         `;
   }
 
-  function generateWorkedExample(key, text) {
+  // --- Generate Worked Example Text ---
+  function generateWorkedExample(key, text, isEncrypt) {
     exampleSection.style.display = "block";
+    const title = exampleSection.querySelector("h2");
+    title.innerText = isEncrypt
+      ? "Worked Example: How Encryption Happened"
+      : "Worked Example: How Decryption Happened";
 
-    // Re-cleaning text for explanation purposes (mirrors logic in Playfair.js)
     let cleanText = text
       .toLowerCase()
       .replace(/[^a-z]/g, "")
       .replace(/j/g, "i");
-    let digraphs = [];
-    for (let i = 0; i < cleanText.length; i++) {
-      let a = cleanText[i];
-      let b = i + 1 < cleanText.length ? cleanText[i + 1] : "x";
+    let pairList = [];
 
-      if (a === b) {
-        digraphs.push(a + "x");
-        // Don't skip the next letter if we inserted an 'x'
-      } else {
-        digraphs.push(a + b);
-        i++;
+    // Reconstruct pairs for display string
+    if (isEncrypt) {
+      let processed = "";
+      for (let i = 0; i < cleanText.length; i++) {
+        let a = cleanText[i];
+        let b = i + 1 < cleanText.length ? cleanText[i + 1] : "x";
+        if (a === b) {
+          processed += a + "x";
+        } else {
+          processed += a + b;
+          i++;
+        }
       }
-    }
-    if (
-      cleanText.length % 2 !== 0 &&
-      digraphs[digraphs.length - 1].length === 1
-    ) {
-      digraphs[digraphs.length - 1] += "x";
+      if (processed.length % 2 !== 0) processed += "x";
+      for (let i = 0; i < processed.length; i += 2)
+        pairList.push(processed.substring(i, i + 2));
+    } else {
+      if (cleanText.length % 2 !== 0) cleanText += "x";
+      for (let i = 0; i < cleanText.length; i += 2)
+        pairList.push(cleanText.substring(i, i + 2));
     }
 
     const result = document
       .getElementById("cipherResult")
-      .innerText.replace("Ciphertext: ", "");
+      .innerText.split(": ")[1];
+
+    // --- Dynamic Text for Steps ---
+    const step2Title = isEncrypt
+      ? "2. Digraph Formation (Padding)"
+      : "2. Splitting Ciphertext";
+    const step2Desc = isEncrypt
+      ? "The message was split into pairs. Repeated letters in a pair were padded with 'X'."
+      : "The ciphertext was split into pairs. No 'X' padding is needed for decryption.";
+
+    const step3Rules = isEncrypt
+      ? `<li><strong>Same Row:</strong> Shift Right.</li>
+           <li><strong>Same Column:</strong> Shift Down.</li>`
+      : `<li><strong>Same Row:</strong> Shift Left (Reverse).</li>
+           <li><strong>Same Column:</strong> Shift Up (Reverse).</li>`;
 
     exampleContent.innerHTML = `
             <div style="text-align: left;">
                 <p><strong>1. Matrix Construction:</strong><br>
-                Using the key <code>${key.toUpperCase()}</code>, we built the 5x5 grid above, replacing 'J' with 'I' and filling remaining slots with the alphabet.</p>
+                Using the key <code>${key.toUpperCase()}</code>, we built the 5x5 grid.</p>
 
-                <p><strong>2. Digraph Formation:</strong><br>
-                The message was split into pairs. Repeated letters in a pair or an odd trailing letter were padded with 'X':<br>
-                <code>${digraphs.join(" | ").toUpperCase()}</code></p>
+                <p><strong>${step2Title}:</strong><br>
+                ${step2Desc}<br>
+                <code>${pairList.join(" | ").toUpperCase()}</code></p>
 
                 <p><strong>3. Transformation Rules:</strong></p>
                 <ul class="step-list" style="margin-top: 10px; margin-bottom: 20px;">
-                    <li>Each pair was located in the matrix.</li>
-                    <li>If in the <strong>same row</strong>, we shifted right.</li>
-                    <li>If in the <strong>same column</strong>, we shifted down.</li>
-                    <li>If they formed a <strong>rectangle</strong>, we swapped corners.</li>
+                    ${step3Rules}
+                    <li><strong>Rectangle:</strong> Swap corners (Same for both).</li>
                 </ul>
 
                 <p><strong>4. Final Result:</strong><br>
-                The resulting ciphertext is: <strong>${result}</strong></p>
+                The resulting text is: <strong>${result}</strong></p>
             </div>
         `;
 
