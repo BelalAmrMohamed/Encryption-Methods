@@ -74,6 +74,33 @@
             font-family: 'Courier New', monospace;
             font-weight: 600;
         }
+
+        .step-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .step-list li {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-list li::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1.8rem;
+            height: 1.8rem;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 1.8rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -85,6 +112,38 @@
             <p class="subtitle">The zigzag transposition cipher.</p>
         </div>
     </header>
+
+    <section class="content-section">
+        <div class="container">
+            <h2>About the Cipher</h2>
+            <p>
+                The <strong>Rail Fence Cipher</strong> (also known as the zigzag cipher) is a form of transposition
+                cipher.
+                It gets its name from the way the message is written: up and down on successive "rails" of an imaginary
+                fence,
+                much like the wooden rails of a physical fence. Unlike the Playfair cipher which substitutes letters,
+                this cipher simply rearranges their order.
+            </p>
+            <br>
+            <div style="text-align: center;">
+                <img src="Images/Railfence Cipher explanation.png" alt="Rail Fence Zigzag Diagram"
+                    style="max-width: 100%; height: auto; border-radius: 8px;">
+            </div>
+            <br>
+            <h3>How It Works</h3>
+            <ul class="step-list">
+                <li><strong>Define the Rails:</strong> Decide on a number of rows (rails) to use for the encryption.
+                </li>
+                <li><strong>Write in Zigzag:</strong> Write the message starting at the top rail, moving down diagonally
+                    until the bottom rail is hit, then moving back up diagonally.</li>
+                <li><strong>Encryption (Read Row by Row):</strong> To create the ciphertext, read the characters from
+                    the grid starting from the top rail, then the second rail, and so on.</li>
+                <li><strong>Decryption (Fill the Path):</strong> Draw the zigzag path first using placeholders. Fill
+                    these placeholders row-by-row with the ciphertext letters, then read the message following the
+                    zigzag shape.</li>
+            </ul>
+        </div>
+    </section>
 
     <main>
         <section class="content-section">

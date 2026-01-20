@@ -2,5 +2,6 @@
 *.md
 !robots.txt
 !README.md
+!CHANGELOG.md
 
 tools/

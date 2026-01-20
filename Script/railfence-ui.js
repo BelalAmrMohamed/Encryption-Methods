@@ -98,19 +98,63 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
+  // function generateWorkedExample(word, rows, isEncrypt, result) {
+  //   exampleSection.style.display = "block";
+  //   const content = document.getElementById("worked-example-content");
+
+  //   content.innerHTML = `
+  //           <p><strong>1. Setup:</strong> Using ${rows} rails for the message "${word}".</p>
+  //           <p><strong>2. The Zigzag:</strong> The letters move from top to bottom and back up.</p>
+  //           <p><strong>3. Process:</strong> ${
+  //             isEncrypt
+  //               ? "Read the characters row-by-row to form the ciphertext."
+  //               : "Place the ciphertext characters into the rows and read the zigzag path."
+  //           }</p>
+  //           <p><strong>Final Result:</strong> <code>${result}</code></p>
+  //       `;
+  // }
+
   function generateWorkedExample(word, rows, isEncrypt, result) {
     exampleSection.style.display = "block";
+    const title = exampleSection.querySelector("h2");
     const content = document.getElementById("worked-example-content");
 
+    title.innerText = isEncrypt
+      ? "Worked Example: How Encryption Happened"
+      : "Worked Example: How Decryption Happened";
+
+    const step2Title = isEncrypt
+      ? "2. Zigzag Transposition"
+      : "2. Mapping the Rails";
+    const step2Desc = isEncrypt
+      ? `The message was written across <strong>${rows} rails</strong> in a zigzag pattern.`
+      : `We first mapped out where the letters would land on <strong>${rows} rails</strong> to know how many letters belong on each rail.`;
+
+    const step3Rules = isEncrypt
+      ? `<li><strong>Identify Rows:</strong> Grouped letters based on the rail they sit on.</li>
+           <li><strong>Concatenate:</strong> Read each rail from top to bottom to create the final string.</li>`
+      : `<li><strong>Fill Rails:</strong> Filled the empty zigzag slots row-by-row using the ciphertext letters.</li>
+           <li><strong>Read Zigzag:</strong> Followed the "V" shape path to reconstruct the original message.</li>`;
+
     content.innerHTML = `
-            <p><strong>1. Setup:</strong> Using ${rows} rails for the message "${word}".</p>
-            <p><strong>2. The Zigzag:</strong> The letters move from top to bottom and back up.</p>
-            <p><strong>3. Process:</strong> ${
-              isEncrypt
-                ? "Read the characters row-by-row to form the ciphertext."
-                : "Place the ciphertext characters into the rows and read the zigzag path."
-            }</p>
-            <p><strong>Final Result:</strong> <code>${result}</code></p>
-        `;
+        <div style="text-align: left;">
+            <p><strong>1. Setup:</strong><br>
+            Message: <code>${word.toUpperCase()}</code><br>
+            Rails: <strong>${rows}</strong></p>
+
+            <p><strong>${step2Title}:</strong><br>
+            ${step2Desc}</p>
+
+            <p><strong>3. Transformation Steps:</strong></p>
+            <ul class="step-list" style="margin-top: 10px; margin-bottom: 20px;">
+                ${step3Rules}
+            </ul>
+
+            <p><strong>4. Final Result:</strong><br>
+            The resulting text is: <strong>${result}</strong></p>
+        </div>
+    `;
+
+    exampleSection.scrollIntoView({ behavior: "smooth" });
   }
 });
