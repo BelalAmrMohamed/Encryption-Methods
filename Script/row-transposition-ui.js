@@ -123,7 +123,10 @@ function setupDecryptionVisuals(ciphertext, key) {
   const cleanCipher = ciphertext.replace(/[^a-zA-Z]/g, "").toUpperCase();
   const cols = key.length;
   const rows = Math.ceil(cleanCipher.length / cols);
-  const longColsCount =
+
+  // 1. Calculate the "ragged" shape of the original grid
+  // This is vital so students see how many letters go into each column.
+  const numLongCols =
     cleanCipher.length % cols === 0 ? cols : cleanCipher.length % cols;
 
   let matrix = Array.from({ length: rows }, () => Array(cols).fill(""));
@@ -132,17 +135,19 @@ function setupDecryptionVisuals(ciphertext, key) {
     .map((char, i) => ({ char, index: i }))
     .sort((a, b) => a.char.localeCompare(b.char));
 
-  visualSteps = []; // FIX: Removed empty Step 0
+  visualSteps = [];
   let charsUsed = 0;
 
+  // STEP-BY-STEP COLUMN FILLING
   keyOrder.forEach((pair, stepIdx) => {
     const colIdx = pair.index;
-    const isLongCol = colIdx < longColsCount;
-    const itemsInCol = isLongCol ? rows : rows - 1;
-    const chunk = cleanCipher.substr(charsUsed, itemsInCol);
-    charsUsed += itemsInCol;
+    // Columns from 0 to (numLongCols - 1) have 'rows' letters. Others have 'rows - 1'.
+    const itemsInThisCol = colIdx < numLongCols ? rows : rows - 1;
+    const chunk = cleanCipher.substr(charsUsed, itemsInThisCol);
+    charsUsed += itemsInThisCol;
 
-    for (let r = 0; r < itemsInCol; r++) {
+    // Place the chunk into the specific column
+    for (let r = 0; r < itemsInThisCol; r++) {
       matrix[r][colIdx] = chunk[r];
     }
 
@@ -150,12 +155,12 @@ function setupDecryptionVisuals(ciphertext, key) {
       matrix: JSON.parse(JSON.stringify(matrix)),
       activeCol: colIdx,
       key: key,
-      accumulated: cleanCipher.substring(0, charsUsed), // FIX: Show text segments used so far
-      explanation: `<strong>Step ${stepIdx + 1}:</strong> Filling column <strong>${colIdx + 1}</strong> with "<strong>${chunk}</strong>".`,
+      accumulated: `Placed "${chunk}" into its Column`,
+      explanation: `<strong>Step ${stepIdx + 1}:</strong> We take the next ${itemsInThisCol} letters from the ciphertext (<strong>${chunk}</strong>). Since '${pair.char}' is the #${stepIdx + 1} letter in the sorted key, we fill <strong>Column ${colIdx + 1}</strong>.`,
     });
   });
 
-  // Final step: Plaintext assembly
+  // FINAL STEP: READING ROWS
   let finalText = "";
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
@@ -168,8 +173,7 @@ function setupDecryptionVisuals(ciphertext, key) {
     activeCol: -1,
     key: key,
     accumulated: finalText,
-    explanation:
-      "<strong>Complete:</strong> The grid is rebuilt. We read it row-by-row to reveal the message.",
+    explanation: `<strong>Final Step: Reading the Message.</strong> Now that the columns are restored, we read <strong>Row-by-Row</strong> (Left-to-Right) to find the original message: <strong>${finalText}</strong>.`,
   });
 
   currentStep = 0;
@@ -189,7 +193,7 @@ function renderStep() {
 
   info.innerText = `Step ${currentStep + 1} of ${visualSteps.length}`;
   explanation.innerHTML = step.explanation;
-  resultBox.innerText = step.accumulated; // FIX: No more placeholders
+  resultBox.innerText = step.accumulated;
 
   let html = `<table class="matrix-table"><tr>`;
   step.key.split("").forEach((c, i) => {
@@ -202,6 +206,7 @@ function renderStep() {
     html += `<tr>`;
     row.forEach((cell, i) => {
       let cssClass = i === step.activeCol ? "highlight-col" : "";
+      // In decryption, highlight cells that have been filled to show progress
       if (!isEncryptMode && cell) cssClass += " filled-cell";
       html += `<td class="${cssClass}">${cell.toUpperCase()}</td>`;
     });
