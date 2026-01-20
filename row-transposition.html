@@ -77,6 +77,13 @@
             background-color: rgba(52, 152, 219, 0.2) !important;
         }
 
+        /* New class for filled cells during decryption */
+        .filled-cell {
+            background-color: #e8f6f3 !important;
+            /* Light green */
+            color: #16a085;
+        }
+
         .active-key {
             background-color: var(--accent-color) !important;
             color: white !important;
@@ -89,15 +96,6 @@
         #matrix {
             text-align: center;
             margin-bottom: 1.5rem;
-        }
-
-        #cipherResult {
-            background: var(--bg-light);
-            padding: 1rem;
-            border-left: 4px solid var(--primary-color);
-            min-height: 3rem;
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
         }
 
         .step-list {
@@ -125,6 +123,26 @@
             text-align: center;
             line-height: 1.8rem;
             font-weight: bold;
+        }
+
+        /* New style for the accumulated result in visualizer */
+        .result-box {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding: 10px;
+            border: 2px dashed #ccc;
+            margin-top: 10px;
+            background: #fafafa;
+            word-break: break-all;
+        }
+
+        .result-label {
+            display: block;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -178,15 +196,17 @@
                         <input type="text" id="plaintext" placeholder="Enter message here">
                     </div>
                     <div class="btn-group">
-                        <button id="btn-encrypt-trigger" class="btn-primary" onclick="encrypt()">Encrypt</button>
-                        <button id="btn-decrypt-trigger" class="btn-secondary" onclick="decrypt()">Decrypt</button>
+                        <button id="btn-encrypt-trigger" class="btn-primary">Encrypt</button>
+                        <button id="btn-decrypt-trigger" class="btn-secondary">Decrypt</button>
                     </div>
-                    <div style="overflow-x: auto;">
-                        <table id="matrix" class="matrix-table"></table>
-                    </div>
+
                     <div class="input-group">
-                        <label>Result:</label>
+                        <label>Final Result:</label>
                         <div id="output">...</div>
+                    </div>
+
+                    <div style="overflow-x: auto; margin-top: 20px;">
+                        <table id="matrix" class="matrix-table"></table>
                     </div>
                 </div>
             </div>
@@ -194,16 +214,26 @@
 
         <section id="visualizer-section" class="content-section" style="display: none;">
             <div class="container">
-                <h2>Visualizer: Column Extraction</h2>
-                <p style="text-align: center; color: var(--text-light);">Watch how the key dictates which column is read
-                    next.</p>
+                <h2>Visualizer</h2>
+                <p style="text-align: center; color: var(--text-light);" id="visual-subtitle">Watch the process
+                    step-by-step.</p>
+
                 <div class="tool-container">
                     <div class="btn-group">
                         <button id="prev-step" class="btn-secondary" style="width: auto;">&larr; Previous</button>
                         <span id="step-info" style="align-self: center; font-weight: bold;">Step 1 of X</span>
                         <button id="next-step" class="btn-primary" style="width: auto;">Next &rarr;</button>
                     </div>
+
                     <div id="visual-matrix-area" style="overflow-x: auto;"></div>
+
+                    <div id="visual-result-container" style="text-align: left; margin-top: 1rem;">
+                        <div class="result-box">
+                            <span class="result-label" id="res-label">Accumulated Output:</span>
+                            <span id="visual-accumulated-text" style="color: var(--primary-color);"></span>
+                        </div>
+                    </div>
+
                     <div id="visual-explanation"
                         style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-light); border-left: 4px solid var(--accent-color);">
                     </div>

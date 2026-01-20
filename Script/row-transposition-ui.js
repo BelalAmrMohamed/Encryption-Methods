@@ -2,24 +2,24 @@
 
 let visualSteps = [];
 let currentStep = 0;
+let isEncryptMode = true;
 
 document.addEventListener("DOMContentLoaded", () => {
   const encryptBtn = document.getElementById("btn-encrypt-trigger");
   const decryptBtn = document.getElementById("btn-decrypt-trigger");
 
-  encryptBtn.addEventListener("click", () => {
-    const message = document.getElementById("plaintext").value;
-    const key = document.getElementById("key").value;
-    if (message && key) {
-      setupVisualizer(message, key);
-      generateWorkedExample(message, key);
-    }
-  });
+  // FIX: Restored original button logic and event bindings
+  if (encryptBtn) {
+    encryptBtn.addEventListener("click", () => {
+      handleAction(true);
+    });
+  }
 
-  decryptBtn.addEventListener("click", () => {
-    document.getElementById("visualizer-section").style.display = "none";
-    document.getElementById("worked-example-section").style.display = "none";
-  });
+  if (decryptBtn) {
+    decryptBtn.addEventListener("click", () => {
+      handleAction(false);
+    });
+  }
 
   document.getElementById("next-step").onclick = () => {
     if (currentStep < visualSteps.length - 1) {
@@ -36,12 +36,46 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 });
 
-function setupVisualizer(message, key) {
+function handleAction(isEncrypt) {
+  const message = document.getElementById("plaintext").value;
+  const key = document.getElementById("key").value;
+
+  if (!message || !key) {
+    alert("Please fill in both the message and the key.");
+    return;
+  }
+
+  isEncryptMode = isEncrypt;
+
+  // FIX: Restore core calculation and Matrix rendering in the Interactive Tool
+  if (isEncrypt) {
+    encrypt(); // Calls function in row-transposition.js
+  } else {
+    decrypt(); // Calls function in row-transposition.js
+  }
+
+  // Setup Visualizer
+  const section = document.getElementById("visualizer-section");
+  section.style.display = "block";
+
+  if (isEncrypt) {
+    setupEncryptionVisuals(message, key);
+    generateEncryptionExample(message, key);
+  } else {
+    setupDecryptionVisuals(message, key);
+    generateDecryptionExample(message, key);
+  }
+}
+
+// ==========================================
+// ENCRYPTION VISUALS
+// ==========================================
+
+function setupEncryptionVisuals(message, key) {
   const prepared = message.replace(/[^a-zA-Z]/g, "").toUpperCase();
   const cols = key.length;
   const rows = Math.ceil(prepared.length / cols);
 
-  // Create matrix manually to avoid side effects
   let matrix = [];
   let idx = 0;
   for (let i = 0; i < rows; i++) {
@@ -57,71 +91,186 @@ function setupVisualizer(message, key) {
     .map((char, i) => ({ char, index: i }))
     .sort((a, b) => a.char.localeCompare(b.char));
 
-  visualSteps = keyOrder.map((pair, stepIdx) => ({
-    activeCol: pair.index,
-    keyChar: pair.char,
-    matrix: matrix,
-    key: key,
-    stepNum: stepIdx + 1,
-    totalSteps: keyOrder.length,
-  }));
+  visualSteps = []; // FIX: Removed the empty "Step 0"
+  let currentCiphertext = "";
+
+  keyOrder.forEach((pair, stepIdx) => {
+    const colIdx = pair.index;
+    let extractedChars = "";
+    for (let r = 0; r < rows; r++) {
+      extractedChars += matrix[r][colIdx];
+    }
+    currentCiphertext += extractedChars;
+
+    visualSteps.push({
+      matrix: matrix,
+      activeCol: colIdx,
+      key: key,
+      accumulated: currentCiphertext, // FIX: Now shows actual ciphertext
+      explanation: `<strong>Order #${stepIdx + 1}:</strong> Reading column <strong>${colIdx + 1}</strong> (Key: '${pair.char}'). Extracted: "<strong>${extractedChars}</strong>".`,
+    });
+  });
 
   currentStep = 0;
-  document.getElementById("visualizer-section").style.display = "block";
   renderStep();
 }
+
+// ==========================================
+// DECRYPTION VISUALS
+// ==========================================
+
+function setupDecryptionVisuals(ciphertext, key) {
+  const cleanCipher = ciphertext.replace(/[^a-zA-Z]/g, "").toUpperCase();
+  const cols = key.length;
+  const rows = Math.ceil(cleanCipher.length / cols);
+  const longColsCount =
+    cleanCipher.length % cols === 0 ? cols : cleanCipher.length % cols;
+
+  let matrix = Array.from({ length: rows }, () => Array(cols).fill(""));
+  const keyOrder = key
+    .split("")
+    .map((char, i) => ({ char, index: i }))
+    .sort((a, b) => a.char.localeCompare(b.char));
+
+  visualSteps = []; // FIX: Removed empty Step 0
+  let charsUsed = 0;
+
+  keyOrder.forEach((pair, stepIdx) => {
+    const colIdx = pair.index;
+    const isLongCol = colIdx < longColsCount;
+    const itemsInCol = isLongCol ? rows : rows - 1;
+    const chunk = cleanCipher.substr(charsUsed, itemsInCol);
+    charsUsed += itemsInCol;
+
+    for (let r = 0; r < itemsInCol; r++) {
+      matrix[r][colIdx] = chunk[r];
+    }
+
+    visualSteps.push({
+      matrix: JSON.parse(JSON.stringify(matrix)),
+      activeCol: colIdx,
+      key: key,
+      accumulated: cleanCipher.substring(0, charsUsed), // FIX: Show text segments used so far
+      explanation: `<strong>Step ${stepIdx + 1}:</strong> Filling column <strong>${colIdx + 1}</strong> with "<strong>${chunk}</strong>".`,
+    });
+  });
+
+  // Final step: Plaintext assembly
+  let finalText = "";
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (matrix[r][c]) finalText += matrix[r][c];
+    }
+  }
+
+  visualSteps.push({
+    matrix: matrix,
+    activeCol: -1,
+    key: key,
+    accumulated: finalText,
+    explanation:
+      "<strong>Complete:</strong> The grid is rebuilt. We read it row-by-row to reveal the message.",
+  });
+
+  currentStep = 0;
+  renderStep();
+}
+
+// ==========================================
+// RENDERER
+// ==========================================
 
 function renderStep() {
   const step = visualSteps[currentStep];
   const area = document.getElementById("visual-matrix-area");
   const info = document.getElementById("step-info");
   const explanation = document.getElementById("visual-explanation");
+  const resultBox = document.getElementById("visual-accumulated-text");
 
-  info.innerText = `Step ${step.stepNum} of ${step.totalSteps}`;
+  info.innerText = `Step ${currentStep + 1} of ${visualSteps.length}`;
+  explanation.innerHTML = step.explanation;
+  resultBox.innerText = step.accumulated; // FIX: No more placeholders
 
   let html = `<table class="matrix-table"><tr>`;
   step.key.split("").forEach((c, i) => {
     const activeClass = i === step.activeCol ? "active-key" : "";
-    html += `<th class="${activeClass}">${c}</th>`;
+    html += `<th class="${activeClass}">${c.toUpperCase()}</th>`;
   });
   html += `</tr>`;
 
   step.matrix.forEach((row) => {
     html += `<tr>`;
     row.forEach((cell, i) => {
-      const highlight = i === step.activeCol ? "highlight-col" : "";
-      html += `<td class="${highlight}">${cell}</td>`;
+      let cssClass = i === step.activeCol ? "highlight-col" : "";
+      if (!isEncryptMode && cell) cssClass += " filled-cell";
+      html += `<td class="${cssClass}">${cell.toUpperCase()}</td>`;
     });
     html += `</tr>`;
   });
   html += `</table>`;
-
   area.innerHTML = html;
-  explanation.innerHTML = `Reading Column <strong>${step.activeCol + 1}</strong> (Key Character: <strong>${step.keyChar}</strong>). 
-    These letters are added to the ciphertext next.`;
 }
 
-function generateWorkedExample(message, key) {
+// Worked Example functions remain unchanged to preserve existing detail
+function generateEncryptionExample(message, key) {
   const section = document.getElementById("worked-example-section");
   const content = document.getElementById("worked-example-content");
   section.style.display = "block";
+  section.querySelector("h2").innerText = "Worked Example: Encryption";
 
   const prepared = message.replace(/[^a-zA-Z]/g, "").toUpperCase();
-  const keySorted = key.split("").sort().join(", ");
+  const sortedKey = key.split("").sort().join(" - ");
+  const cols = key.length;
 
   content.innerHTML = `
         <div style="text-align: left;">
-            <p><strong>1. Data Preparation:</strong> The text was cleaned to <code>${prepared}</code>. 
-            The key <code>${key}</code> has <strong>${key.length}</strong> characters, so we use ${key.length} columns.</p>
+            <p><strong>1. Data Preparation:</strong><br>
+            Message cleaned: <code>${prepared}</code><br>
+            Key Length: <strong>${cols}</strong> (So we need ${cols} columns).</p>
             
-            <p><strong>2. Grid Filling:</strong> We wrote the text across the rows. 
-            Any empty cells were filled with "X" to keep the grid rectangular.</p>
+            <p><strong>2. Fill the Grid:</strong><br>
+            We write the message horizontally (row by row). Since the length isn't a perfect multiple of ${cols}, we pad with 'X'.</p>
 
-            <p><strong>3. Column Ordering:</strong> The key characters are sorted alphabetically: <code>${keySorted}</code>. 
-            This dictates the order we read the columns.</p>
+            <p><strong>3. Determine Column Order:</strong><br>
+            We sort the key letters alphabetically: <br>
+            <code>${sortedKey}</code><br>
+            This tells us which column to read first, second, etc.</p>
 
-            <p><strong>4. Final Extraction:</strong> We look at the first character in the sorted key, find its original column, 
-            and read it top-to-bottom. We repeat this for all columns.</p>
+            <p><strong>4. Extract Ciphertext:</strong><br>
+            We go through the sorted key, find the corresponding column in the grid, and read the letters from <strong>Top to Bottom</strong>. Combining these column chunks gives the final result.</p>
+        </div>
+    `;
+  section.scrollIntoView({ behavior: "smooth" });
+}
+
+function generateDecryptionExample(ciphertext, key) {
+  const section = document.getElementById("worked-example-section");
+  const content = document.getElementById("worked-example-content");
+  section.style.display = "block";
+  section.querySelector("h2").innerText = "Worked Example: Decryption";
+
+  const cleanCipher = ciphertext.replace(/[^a-zA-Z]/g, "").toUpperCase();
+  const cols = key.length;
+  const rows = Math.ceil(cleanCipher.length / cols);
+
+  content.innerHTML = `
+        <div style="text-align: left;">
+            <p><strong>1. Analyze Dimensions:</strong><br>
+            Ciphertext Length: ${cleanCipher.length}<br>
+            Key Length: ${cols}<br>
+            Grid Height (Rows): ${rows} (Calculated as Ceiling(${cleanCipher.length} / ${cols}))</p>
+            
+            <p><strong>2. Determine Column Shapes:</strong><br>
+            When the message was written, not all rows may have been full. 
+            The "ragged" empty spots are always at the bottom-right.
+            We calculate exactly how many letters belong in each column based on its position.</p>
+
+            <p><strong>3. Fill by Sorted Key:</strong><br>
+            We take the sorted key (Alphabetical). We identify which original column that letter corresponds to.
+            We grab the correct number of letters from the ciphertext and drop them into that column.</p>
+
+            <p><strong>4. Read Plaintext:</strong><br>
+            Once all columns are filled, the grid is reconstructed. We read <strong>Left-to-Right, Top-to-Bottom</strong> to reveal the hidden message.</p>
         </div>
     `;
   section.scrollIntoView({ behavior: "smooth" });
