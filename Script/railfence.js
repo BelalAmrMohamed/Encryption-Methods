@@ -1,82 +1,80 @@
+/**
+ * Creates the zigzag matrix for a given word and row count.
+ * Returns an array of arrays where unused spots are null.
+ */
 function createMatrix(word, rows) {
-  const cols = Math.ceil(word.length / rows);
-  const matrix = Array.from({ length: rows }, () => Array(cols).fill(""));
+  if (rows < 2) return [[...word]];
 
-  let index = 0;
-  for (let col = 0; col < cols; col++) {
-    for (let row = 0; row < rows; row++) {
-      if (index < word.length) {
-        matrix[row][col] = word[index++];
-      }
+  const matrix = Array.from({ length: rows }, () =>
+    Array(word.length).fill(null),
+  );
+  let currRow = 0;
+  let descending = false;
+
+  for (let i = 0; i < word.length; i++) {
+    matrix[currRow][i] = "*"; // Mark the path
+
+    // Change direction at top or bottom row
+    if (currRow === 0 || currRow === rows - 1) {
+      descending = !descending;
     }
+    currRow += descending ? 1 : -1;
   }
-
-  displayMatrix(matrix);
   return matrix;
 }
 
-function displayMatrix(matrix) {
-  const matrixDiv = document.getElementById("matrix");
-  let tableHTML = '<table class="matrix-table">';
-  for (let row of matrix) {
-    tableHTML += "<tr>";
-    for (let cell of row) {
-      tableHTML += `<td>${cell || ""}</td>`;
-    }
-    tableHTML += "</tr>";
-  }
-  tableHTML += "</table>";
-  matrixDiv.innerHTML = `<h3>Matrix:</h3>${tableHTML}`;
-}
+/**
+ * Encrypts a word by reading the zigzag matrix row by row.
+ */
+function encryptWord(word, rows) {
+  if (rows < 2) return word;
 
-function cipherWord(word, rows) {
   const matrix = createMatrix(word, rows);
-  let cipheredWord = "";
-  for (let row of matrix) {
-    for (let cell of row) {
-      if (cell) cipheredWord += cell;
-    }
+  let charIndex = 0;
+
+  // Place letters in the zigzag path
+  // (Re-running logic to place actual letters)
+  let currRow = 0;
+  let descending = false;
+  for (let i = 0; i < word.length; i++) {
+    matrix[currRow][i] = word[i];
+    if (currRow === 0 || currRow === rows - 1) descending = !descending;
+    currRow += descending ? 1 : -1;
   }
-  return cipheredWord;
+
+  // Read row by row, ignoring empty spots
+  return matrix
+    .flat()
+    .filter((char) => char !== null)
+    .join("");
 }
 
-function decryptWord() {
-  let encrypted = document
-    .getElementById("word")
-    .value.toUpperCase()
-    .replace(/[^A-Z]/g, "");
-  const rows = parseInt(document.getElementById("rows").value);
-  const cols = Math.ceil(encrypted.length / rows);
-  const matrix = Array.from({ length: rows }, () => []);
+/**
+ * Decrypts a word by filling the matrix row by row and reading in a zigzag.
+ */
+function decryptWord(word, rows) {
+  if (rows < 2) return word;
 
-  // Fill the matrix column by column
-  let index = 0;
-  for (let col = 0; col < cols; col++) {
-    for (let row = 0; row < rows; row++) {
-      if (index < encrypted.length) {
-        matrix[row][col] = encrypted[index++];
+  const matrix = createMatrix(word, rows); // Get the "*" path
+  let charIndex = 0;
+
+  // Fill the marked path row by row with encrypted characters
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < word.length; c++) {
+      if (matrix[r][c] === "*" && charIndex < word.length) {
+        matrix[r][c] = word[charIndex++];
       }
     }
   }
 
-  // Read the matrix row by row
-  let decryptedWord = "";
-  for (let col = 0; col < cols; col++) {
-    for (let row = 0; row < rows; row++) {
-      if (matrix[row][col]) decryptedWord += matrix[row][col];
-    }
+  // Read the matrix in a zigzag to get the original word
+  let result = "";
+  let currRow = 0;
+  let descending = false;
+  for (let i = 0; i < word.length; i++) {
+    result += matrix[currRow][i];
+    if (currRow === 0 || currRow === rows - 1) descending = !descending;
+    currRow += descending ? 1 : -1;
   }
-
-  document.getElementById("result").innerText =
-    `Decrypted Word: ${decryptedWord}`;
-}
-
-function encryptWord() {
-  let word = document
-    .getElementById("word")
-    .value.toUpperCase()
-    .replace(/[^A-Z]/g, "");
-  const rows = parseInt(document.getElementById("rows").value);
-  const ciphered = cipherWord(word, rows);
-  document.getElementById("result").innerText = `Ciphered Word: ${ciphered}`;
+  return result;
 }

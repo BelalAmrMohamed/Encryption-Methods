@@ -2,174 +2,135 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Coming Soon | NetQuest</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Meta -->
-    <meta name="description"
-        content="This NetQuest feature is under construction. Stay tuned for upcoming missions and tools." />
-    <meta name="theme-color" content="#0b0f1a" />
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
+    <meta charset="UTF-8">
+    <title>Rail Fence Cipher | Encryption Methods</title>
+    <link rel="stylesheet" href="CSS/styles.css">
     <style>
-        :root {
-            --bg: #0b0f1a;
-            --panel: rgba(255, 255, 255, 0.08);
-            --border: rgba(255, 255, 255, 0.15);
-            --primary: #00e5ff;
-            --secondary: #00ffa6;
-            --text: #e6e9f0;
-            --muted: #9aa4b2;
-            --glow: 0 0 30px rgba(0, 229, 255, 0.25);
+        /* Shared styling with Playfair */
+        .matrix-table {
+            margin: 1rem auto;
+            border-collapse: collapse;
+            font-family: 'Courier New', monospace;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: "Inter", system-ui, sans-serif;
-        }
-
-        body {
-            min-height: 100vh;
-            background:
-                radial-gradient(circle at top, rgba(0, 229, 255, 0.08), transparent 60%),
-                linear-gradient(180deg, #0b0f1a, #05070d);
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
-
-        .card {
-            max-width: 620px;
-            width: 100%;
-            background: var(--panel);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 48px 40px;
+        .matrix-table td {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
             text-align: center;
-            box-shadow: var(--glow);
+            font-weight: bold;
+            background: #fff;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: rgba(0, 229, 255, 0.15);
-            color: var(--primary);
+        .cell-active {
+            background-color: var(--accent-color) !important;
+            color: white;
+        }
+
+        .tool-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            margin: 2rem auto;
+            border-top: 4px solid var(--accent-color);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
             font-weight: 600;
-            font-size: 0.85rem;
-            margin-bottom: 20px;
         }
 
-        h1 {
-            font-size: clamp(1.8rem, 4vw, 2.4rem);
-            font-weight: 700;
-            margin-bottom: 16px;
-            letter-spacing: -0.02em;
+        .input-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
 
-        p {
-            color: var(--muted);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 32px;
-        }
-
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg,
-                    transparent,
-                    rgba(255, 255, 255, 0.25),
-                    transparent);
-            margin: 32px 0;
-        }
-
-        .actions {
+        .btn-group {
             display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .btn {
-            padding: 12px 22px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text);
+        #cipherResult {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-left: 4px solid var(--primary-color);
+            min-height: 3rem;
+            font-family: 'Courier New', monospace;
             font-weight: 600;
-            text-decoration: none;
-            transition: all 0.25s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn.primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: #000;
-            border: none;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 229, 255, 0.25);
-        }
-
-        footer {
-            margin-top: 32px;
-            font-size: 0.85rem;
-            color: var(--muted);
-        }
-
-        /* Accessibility */
-        @media (prefers-reduced-motion: reduce) {
-            .btn:hover {
-                transform: none;
-                box-shadow: none;
-            }
         }
     </style>
 </head>
 
 <body>
-
-    <main class="card" role="main">
-        <span class="badge">🚧 UNDER DEVELOPMENT</span>
-
-        <h1>Mission Incoming</h1>
-
-        <p>
-            This feature is currently being engineered inside the NetQuest Network Academy.
-            Our architects are building the systems that will power your next mission.
-        </p>
-
-        <div class="divider"></div>
-
-        <div class="actions">
-            <a href="/" class="btn primary">Return to Dashboard</a>
+    <header class="hero-section" style="padding: 2rem 0;">
+        <div class="container">
+            <a href="index.html" style="color: white; text-decoration: underline;">&larr; Back to Home</a>
+            <h1>Rail Fence Cipher</h1>
+            <p class="subtitle">The zigzag transposition cipher.</p>
         </div>
+    </header>
 
-        <footer>
-            NetQuest © <span id="year"></span> — Learn. Play. Master Networks.
-        </footer>
+    <main>
+        <section class="content-section">
+            <div class="container">
+                <h2>Interactive Tool</h2>
+                <div class="tool-container">
+                    <div class="input-group">
+                        <label for="rows">Number of Rails (Rows)</label>
+                        <input type="number" id="rows" value="3" min="2">
+                    </div>
+                    <div class="input-group">
+                        <label for="plaintext">Message</label>
+                        <input type="text" id="plaintext" placeholder="Enter text">
+                    </div>
+                    <div class="btn-group">
+                        <button id="btn-encrypt" class="btn-primary">Encrypt</button>
+                        <button id="btn-decrypt" class="btn-secondary">Decrypt</button>
+                    </div>
+                    <div id="cipherResult">...</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="visualizer-section" class="content-section"
+            style="display: none; background-color: var(--bg-light);">
+            <div class="container">
+                <h2>Visualizer: Zigzag Path</h2>
+                <div class="tool-container" style="max-width: 900px; overflow-x: auto;">
+                    <div class="btn-group">
+                        <button id="btn-prev" class="btn-secondary">Previous Step</button>
+                        <span id="step-indicator" style="align-self: center; font-weight: bold;">Step 1</span>
+                        <button id="btn-next" class="btn-primary">Next Step</button>
+                    </div>
+                    <div id="interactive-matrix-display"></div>
+                    <div id="rule-explanation"
+                        style="margin-top: 1.5rem; padding: 1rem; background: #fff; border-left: 4px solid var(--accent-color);">
+                        <p id="rule-text"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="worked-example-section" class="content-section" style="display: none;">
+            <div class="container">
+                <h2>Worked Example</h2>
+                <div id="worked-example-content" class="tool-container" style="max-width: 800px;"></div>
+            </div>
+        </section>
     </main>
 
-    <script>
-        document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
-
+    <script src="Script/railfence.js"></script>
+    <script src="Script/railfence-ui.js"></script>
 </body>
 
 </html>
