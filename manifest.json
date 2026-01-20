@@ -13,21 +13,28 @@
   "categories": ["education", "productivity"],
   "dir": "ltr",
   "lang": "en-US",
+
   "icons": [
     {
-      "src": "images/icon-192.png",
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/x-icon",
+      "purpose": "any"
+    },
+    {
+      "src": "Images/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "images/icon.png",
+      "src": "Images/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "images/maskable-icon.png",
+      "src": "Images/icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -35,17 +42,18 @@
   ],
   "screenshots": [
     {
-      "src": "images/screenshot-desktop.png",
+      "src": "Images/screenshot-desktop.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Encryption Methods Dashboard on Desktop"
+      "label": "Encryption Methods educational dashboard on desktop"
     },
     {
-      "src": "images/screenshot-mobile.png",
+      "src": "Images/screenshot-mobile.png",
       "sizes": "1080x1920",
       "type": "image/png",
-      "label": "Interactive Educational MethodsPlayer platform"
+      "form_factor": "narrow",
+      "label": "Encryption Methods interactive learning experience on mobile"
     }
   ],
   "shortcuts": [
@@ -54,28 +62,28 @@
       "short_name": "Stats",
       "description": "Teaches studens how the  cipher Caesar method works",
       "url": "/Encryption Methods/caesar.html",
-      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "Images/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Playfair Cipher",
       "short_name": "Stats",
       "description": "Teaches studens how the Playfair cipher method works",
       "url": "/Encryption Methods/playfair.html",
-      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "Images/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Row Transposition",
       "short_name": "Stats",
       "description": "Teaches studens how the Row Transposition cipher method works",
       "url": "/Encryption Methods/row-transposition.html",
-      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "Images/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Rail Fence Cipher",
       "short_name": "Stats",
       "description": "Teaches studens how the Rail Fence Cipher cipher method works",
       "url": "/Encryption Methods/railfence.html",
-      "icons": [{ "src": "images/icon-192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "Images/icon-192.png", "sizes": "192x192" }]
     }
   ],
   "protocol_handlers": [
