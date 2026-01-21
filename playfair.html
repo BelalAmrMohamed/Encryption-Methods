@@ -6,113 +6,13 @@
     <title>Playfair Cipher | Encryption Methods</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-    <!-- meta data -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Learn and test the Playfair Cipher algorithm interactively.">
 
     <link rel="stylesheet" href="CSS/styles.css">
-
-    <style>
-        /* Matrix Table Styling */
-        .matrix-table {
-            margin: 1rem auto;
-            border-collapse: collapse;
-            font-family: 'Courier New', monospace;
-        }
-
-        .matrix-table td {
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--primary-color);
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-            background: #fff;
-        }
-
-        .tool-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 700px;
-            margin: 2rem auto;
-            border-top: 4px solid var(--accent-color);
-        }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-group button {
-            flex: 1;
-        }
-
-        #matrix {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        #cipherResult {
-            background: var(--bg-light);
-            padding: 1rem;
-            border-left: 4px solid var(--primary-color);
-            min-height: 3rem;
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-        }
-
-        .step-list {
-            list-style: none;
-            counter-reset: step-counter;
-        }
-
-        .step-list li {
-            position: relative;
-            padding-left: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .step-list li::before {
-            counter-increment: step-counter;
-            content: counter(step-counter);
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 1.8rem;
-            height: 1.8rem;
-            background: var(--accent-color);
-            color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 1.8rem;
-            font-weight: bold;
-        }
-    </style>
 </head>
 
-<body>
+<body class="playfair-page">
 
     <header class="hero-section" style="padding: 2rem 0;">
         <div class="container">

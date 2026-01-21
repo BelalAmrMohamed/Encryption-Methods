@@ -245,7 +245,7 @@ function generateEncryptionExample(message, key) {
             We go through the sorted key, find the corresponding column in the grid, and read the letters from <strong>Top to Bottom</strong>. Combining these column chunks gives the final result.</p>
         </div>
     `;
-  section.scrollIntoView({ behavior: "smooth" });
+  // section.scrollIntoView({ behavior: "smooth" });
 }
 
 function generateDecryptionExample(ciphertext, key) {
@@ -278,5 +278,5 @@ function generateDecryptionExample(ciphertext, key) {
             Once all columns are filled, the grid is reconstructed. We read <strong>Left-to-Right, Top-to-Bottom</strong> to reveal the hidden message.</p>
         </div>
     `;
-  section.scrollIntoView({ behavior: "smooth" });
+  // section.scrollIntoView({ behavior: "smooth" });
 }

@@ -155,6 +155,6 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
     `;
 
-    exampleSection.scrollIntoView({ behavior: "smooth" });
+    // exampleSection.scrollIntoView({ behavior: "smooth" });
   }
 });

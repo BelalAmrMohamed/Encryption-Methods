@@ -183,6 +183,6 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
 
     // Scroll smoothly to the example
-    exampleSection.scrollIntoView({ behavior: "smooth" });
+    // exampleSection.scrollIntoView({ behavior: "smooth" });
   }
 });
