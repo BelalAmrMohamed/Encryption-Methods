@@ -534,6 +534,15 @@ footer {
     justify-content: center;
   }
 
+  /* 1. Overrides global column rule */
+  /* 2. Ensures it fits the container */
+  /* 3. Prevents padding from causing overflow */
+  #visual-matrix-container .btn-group {
+    flex-direction: row !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   .playfair-page #visual-matrix-container .btn-group #btn-prev,
   .playfair-page #visual-matrix-container .btn-group #btn-next,
   .railfence-page .tool-container .btn-group #btn-prev,
